@@ -1,46 +1,53 @@
-const btn = document.querySelector('.addBtn')
-const input = document.querySelector('#toDoEl')
-const list = document.querySelector('.list')
+const addTaskBtn = document.getElementById("addTaskBtn");
+const input = document.getElementById("taskTextInput");
+const list = document.querySelector(".list");
 
-function addTask ()  {
+list.addEventListener("click", (e) => {
+  const taskClsName = "list-item";
+  const isCheckedClsName = "title-checked";
+  const isTargetChecked = e.target.classList.contains(isCheckedClsName);
+  e.target.className = !isTargetChecked
+    ? `${taskClsName} ${isCheckedClsName}`
+    : taskClsName;
+});
 
-    if(input.value.trim() === '') {
-        return;
-    }
+addTaskBtn.addEventListener("click", addTask);
 
-    const newTask = document.createElement('div')
-    newTask.innerText = input.value
-    newTask.classList.add('list_item')
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    addTask();
+  }
+});
 
-    const deleteButton = document.createElement('button')
-    deleteButton.innerText = 'x'
-    deleteButton.classList.add('delete_Btn')
+function formTaskAsHtml() {
+  const newTask = document.createElement("li");
+  newTask.innerText = input.value;
+  newTask.className = "list-item";
 
-    newTask.appendChild(deleteButton)
+  const deleteButton = document.createElement("button");
+  deleteButton.innerText = "x";
+  deleteButton.className = "delete-btn";
+  newTask.appendChild(deleteButton);
 
-    deleteButton.addEventListener('click', function (){
-        newTask.remove()
-    })
-
-    list.appendChild(newTask)
-
-    input.value = ''
+  deleteButton.addEventListener("click", () => {
+    newTask.remove();
+  });
+  return newTask;
 }
 
-list.addEventListener('click', function (e) {
-    let isTargetListItem = e.target.classList.contains('list_item');
-    let isTargetChecked = e.target.classList.contains('TitleChecked');
-    if (isTargetListItem && !isTargetChecked) {
-        e.target.classList.add('TitleChecked')
-    } else if (isTargetChecked) {
-        e.target.classList.remove('TitleChecked')
-    }
-})
+function isInputEmpty() {
+  if (input.value.trim() === "") {
+    throw new Error("Can't add empty task");
+  }
+}
 
-btn.addEventListener('click', addTask )
-
-input.addEventListener('keydown', function(e) {
-    if (e.keyCode === 13) {
-       addTask()
-    }
-})
+function addTask() {
+  try {
+    isInputEmpty();
+    const newTask = formTaskAsHtml();
+    list.insertBefore(newTask, list.firstChild);
+    input.value = "";
+  } catch (err) {
+    console.error(err);
+  }
+}
