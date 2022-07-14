@@ -45,7 +45,9 @@ function addTask() {
   try {
     isInputEmpty();
     const newTask = formTaskAsHtml();
-    list.insertBefore(newTask, list.firstChild);
+    setTimeout(() => {
+      list.insertBefore(newTask, list.firstChild);
+    }, 100);
     input.value = "";
   } catch (err) {
     console.error(err);
